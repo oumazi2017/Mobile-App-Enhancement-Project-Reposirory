@@ -41,4 +41,51 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     });
   });
+
+  // API configuration (set endpoints here)
+  const API = {
+    passwordReset: '', // e.g. 'https://api.example.com/auth/reset'
+    orderTracking: '', // e.g. 'https://api.example.com/orders/track'
+    notifications: ''  // e.g. 'https://api.example.com/notify/subscribe'
+  };
+
+  // Attach handlers for demo buttons in the features cards
+  document.querySelectorAll('.card .btn[data-action]').forEach(btn => {
+    btn.addEventListener('click', async function(){
+      const action = this.getAttribute('data-action');
+      if(action === 'passwordReset'){
+        if(API.passwordReset){
+          try{
+            const res = await fetch(API.passwordReset, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email:'demo@example.com'})});
+            const json = await res.json();
+            alert('Password reset: ' + (json.message || JSON.stringify(json)));
+          }catch(err){alert('Password reset failed: '+err.message)}
+        }else{
+          alert('Password reset demo (no API configured)');
+        }
+      }
+      if(action === 'orderTracking'){
+        if(API.orderTracking){
+          try{
+            const res = await fetch(API.orderTracking+'?orderId=12345');
+            const json = await res.json();
+            alert('Order status: ' + (json.status || JSON.stringify(json)));
+          }catch(err){alert('Order tracking failed: '+err.message)}
+        }else{
+          alert('Order tracking demo (no API configured)');
+        }
+      }
+      if(action === 'notifications'){
+        if(API.notifications){
+          try{
+            const res = await fetch(API.notifications, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({device:'demo', subscribe:true})});
+            const json = await res.json();
+            alert('Subscribed: ' + (json.message || JSON.stringify(json)));
+          }catch(err){alert('Subscription failed: '+err.message)}
+        }else{
+          alert('Notifications demo (no API configured)');
+        }
+      }
+    });
+  });
 });
